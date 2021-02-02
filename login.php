@@ -2,11 +2,26 @@
 
  require('connection.inc.php');
  require('functions.inc.php');
+  $msg='';
  
- if(isset ($_POST ['submit'])){
-	echo $username=get_safe_value($con,$_POST['username']);
-    echo $password=get_safe_value($con,$_POST['password']);
+ if(isset($_POST['submit'])){
+	 $username=get_safe_value($con,$_POST['username']);
+     $password=get_safe_value($con,$_POST['password']);
+	 $sql = "select * form admin_users where username='$username' and password='$password'";
+	 $res=mysqli_query($con,$sql);
+	 $count=mysqli_num_rows($res);
+	 if($count>0){
+		 $_SESSION['ADMIN_LOGIN']= 'yes';
+		 $_SESSION['ADMIN_USERNAME']=$username;
+		 header('location:categories.php');
+		 die();
+	 }else{
+		 $msg="please enter correct login details";
+	 }
+	 
+	 
  }
+ 
 
  ?>
 
@@ -41,11 +56,12 @@
                      </div>
                      <div class="form-group">
                         <label>Password</label>
-                        <input type="text" name="password" class="form-control" placeholder="Password"
+                        <input type="password" name="password" class="form-control" placeholder="Password"
 						required>
                      </div>
                      <button type="submit" name="submit" class="btn btn-success btn-flat m-b-30 m-t-30">Sign In</button>
 					</form>
+					<div class="feild-error"><?php  echo $msg?></div>
                </div>
             </div>
          </div>
